@@ -15,33 +15,62 @@ function TodoList() {
 
     const handleButtonClick = () => {
         const {todos} = todoListState;
+
+        if (!inputValue) return;
+
+        if (todos.some(todo => todo === inputValue)) {
+            setTodoListState({
+                ...todoListState,
+                error: "To zadanie juz istnieje!",
+                inputValue:""
+            })
+            return;
+        }
         setTodoListState({
             todos: [...todos, inputValue],
-            inputValue: ''
+            inputValue: '',
+            error: ''
         })
 
     }
 
-    const {todos, inputValue} = todoListState;
+    const handleToDoRemove = (todoValue) => {
+        setTodoListState({
+            ...todoListState,
+            todos: todos.filter(todo => todo !== todoValue)
+        });
+    }
+
+    const {error, todos, inputValue} = todoListState;
 
     return(
-        <div>
-            <div>Todo List</div>
+        <div className="TodoList">
+            <h3>Todo List</h3>
             <input
+                className="Input"
                 name="todo input"
                 placeholder="co bedziemy robić?"
                 value={inputValue}
                 onChange={handleInputChange}
              />
             <button 
+                className="Button"
                 onClick={handleButtonClick}
             > 
                 Dodaj
             </button>
+            {!!error &&
+            <p 
+                className="Error"
+            >
+                {error}
+            </p>
+            }
             {todos.map((todo)=> (
                 <Todo 
                     key={todo}
                     todo={todo}
+                    handleCloseClick={handleToDoRemove}
                 />
             ))}
         </div>
